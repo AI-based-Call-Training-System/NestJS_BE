@@ -1,3 +1,6 @@
+# users.txt
+/users.txt
+
 # compiled output
 /dist
 /node_modules
@@ -14,9 +17,12 @@ lerna-debug.log*
 
 # OS
 .DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
 # Tests
-/coverage
+/coverage/
 /.nyc_output
 
 # IDEs and editors
@@ -52,5 +58,14 @@ pids
 *.seed
 *.pid.lock
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
+# Diagnostic reports
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# TypeScript build cache
+*.tsbuildinfo
+
+# ESLint cache
+.eslintcache
+
+# npm cache
+.npm/
