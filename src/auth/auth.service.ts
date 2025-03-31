@@ -1,72 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import * as fs from 'fs';
-import * as path from 'path';
-
-interface User {
-  id: string;
-  password: string;
-  phone: string;
-}
-
-const filePath = path.join(__dirname, '../../users.txt');
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User, UserDocument } from './user.schema';
 
 @Injectable()
 export class AuthService {
-  private readUsers(): User[] {
-    try {
-      const data = fs.readFileSync(filePath, 'utf8');
-      return data
-        .split('\n')
-        .filter((line) => line.trim())
-        .map((line) => {
-          try {
-            return JSON.parse(line) as User;
-          } catch {
-            console.error('Error parsing line:', line);
-            return null;
-          }
-        })
-        .filter((user): user is User => user !== null);
-    } catch (e) {
-      console.error('Error reading users file:', e);
-      return [];
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+
+  async signup(
+    userId: string,
+    password: string,
+    phoneNumber: string,
+  ): Promise<string> {
+    const existingUser = await this.userModel.findOne({ userId });
+    if (existingUser) {
+      return 'This ID is already taken.';
     }
+
+    const user = new this.userModel({ userId, password, phoneNumber });
+    await user.save();
+    return 'Signup successful!';
   }
 
-  private writeUser(user: User) {
-    fs.appendFileSync(filePath, JSON.stringify(user) + '\n');
-  }
-
-  signup(id: string, password: string, phone: string) {
-    const users = this.readUsers();
-    if (users.find((user) => user.id === id)) {
-      console.log('already exists:', id);
-      return { success: false, message: 'User already exists' };
+  async login(userId: string, password: string): Promise<string> {
+    const user = await this.userModel.findOne({ userId });
+    if (!user) {
+      return 'ID does not exist.';
     }
-    const newUser: User = { id, password, phone };
-    this.writeUser(newUser);
-    console.log('User created:', newUser);
-    return { success: true, message: 'User created successfully' };
-  }
-
-  login(id: string, password: string) {
-    try {
-      const users = this.readUsers();
-      const user = users.find((u) => u.id === id && u.password === password);
-      if (user) {
-        console.log('Login successful:', user.id);
-        return {
-          success: true,
-          message: 'Login successful',
-          user: { id: user.id, phone: user.phone },
-        };
-      } else {
-        console.log('Invalid credentials:', id);
-        return { success: false, message: 'Invalid credentials' };
-      }
-    } catch (e) {
-      console.error('Login failed:', e);
-      return { success: false, message: 'Login failed' };
+    if (user.password !== password) {
+      return 'Incorrect password.';
     }
+    return 'Login successful!';
   }
 }
