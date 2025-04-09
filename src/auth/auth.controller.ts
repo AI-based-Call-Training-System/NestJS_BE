@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  //회원가입
   @Post('signup')
   async signup(
     @Body('userId') userId: string,
@@ -14,6 +15,7 @@ export class AuthController {
     return this.authService.signup(userId, password, phoneNumber);
   }
 
+  //로그인
   @Post('login')
   async login(
     @Body('userId') userId: string,
