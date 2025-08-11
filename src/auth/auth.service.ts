@@ -1,58 +1,41 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { JwtService } from '@nestjs/jwt';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './user.schema';
 
+// 로그인 결과 타입 정의
+export type LoginResult =
+  | { ok: true; access_token: string }
+  | { ok: false; message: string };
+
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  //비밀번호 형식 검사 메서드
-  private validatePassword(password: string): boolean {
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    return passwordRegex.test(password);
-  }
-
-  //전화번호 형식 검사 메서드
-  private validatePhoneNumber(phoneNumber: string): boolean {
-    const phoneNumberRegex = /^\d{3}-\d{4}-\d{4}$/;
-    return phoneNumberRegex.test(phoneNumber);
-  }
-
-  //회원가입 메서드
-  async signup(
-    userId: string,
-    password: string,
-    phoneNumber: string,
-  ): Promise<string> {
-    //비밀번호 형식 검사
-    if (!this.validatePassword(password)) {
-      return '비밀번호는 8자 이상이며 영문자와 숫자로만 구성되어야 합니다.';
-    }
-    //전화번호 형식 검사
-    if (!this.validatePhoneNumber(phoneNumber)) {
-      return '전화번호는 숫자 11자리로만 구성되어야 합니다.';
-    }
-    //아이디 중복 검사
-    const existingUser = await this.userModel.findOne({ userId });
-    if (existingUser) {
-      return '이미 사용 중인 ID 입니다.';
-    }
+  // 회원가입
+  async signup(userId: string, password: string, phoneNumber?: string) {
+    const exists = await this.userModel.exists({ userId });
+    if (exists) return { message: '이미 존재하는 ID 입니다.' };
 
     const user = new this.userModel({ userId, password, phoneNumber });
     await user.save();
-    return '회원가입이 완료되었습니다!';
+    return { message: '회원가입이 완료되었습니다.' };
   }
 
-  //로그인 메서드
-  async login(userId: string, password: string): Promise<string> {
+  // 로그인
+  async login(userId: string, password: string): Promise<LoginResult> {
     const user = await this.userModel.findOne({ userId });
-    if (!user) {
-      return '존재하지 않는 ID 입니다.';
-    }
-    if (user.password !== password) {
-      return '비밀번호가 일치하지 않습니다.';
-    }
-    return '로그인이 완료되었습니다!';
+    if (!user) return { ok: false, message: '존재하지 않는 ID 입니다.' };
+
+    const ok = user.password === password;
+    if (!ok) return { ok: false, message: '비밀번호가 일치하지 않습니다.' };
+
+    const payload = { sub: user.userId.toString(), userId: user.userId };
+    const access_token = await this.jwtService.signAsync(payload);
+    return { ok: true, access_token };
   }
 }
