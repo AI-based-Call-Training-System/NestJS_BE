@@ -11,6 +11,8 @@ import { AuthService } from './auth/auth.service';
 import { User, UserSchema } from './auth/user.schema';
 import { JwtStrategy } from './auth/jwt.strategy';
 
+import { HistoryModule } from './history/history.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -18,6 +20,7 @@ import { JwtStrategy } from './auth/jwt.strategy';
     }),
     MongooseModule.forRoot(process.env.MongoDB_URI!),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    HistoryModule,
 
     JwtModule.register({
       secret: process.env.JWT_SECRET,

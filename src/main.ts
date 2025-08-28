@@ -15,4 +15,4 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   await app.listen(Number(port));
 }
-bootstrap();
+void bootstrap();
