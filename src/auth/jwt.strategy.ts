@@ -9,15 +9,14 @@ export type JwtPayload = { sub: string; userId: string };
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly config: ConfigService) {
     super({
-      // Bearer <token> 인증 (header)
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: config.getOrThrow<string>('JWT_SECRET'),
     });
   }
 
-  // req.user 에 주입될 객체 (payload)
-  async validate(payload: JwtPayload) {
+  // req.user 로 들어갈 객체
+  validate(payload: JwtPayload) {
     return { userId: payload.userId, userMongoId: payload.sub };
   }
 }
