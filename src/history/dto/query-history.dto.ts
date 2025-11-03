@@ -3,11 +3,13 @@ import {
   IsBoolean,
   IsIn,
   IsInt,
+  IsNumber,
   IsOptional,
   IsString,
   Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { isFloat32Array } from 'util/types';
 
 // 세션 목록 조회
 export class QuerySessionsDto {
@@ -42,7 +44,7 @@ export class QueryMessagesDto {
 // 세션 메타 업데이트
 export class UpdateSessionMetaDto {
   @IsOptional() @IsString() title?: string; // 대화 제목
-  @IsOptional() @IsArray() tags?: string[]; // 주제 태그
+  @IsOptional() @IsString() tags?: string; // 주제 태그
   @IsOptional() @Type(() => Boolean) @IsBoolean() bookmark?: boolean; // 즐겨찾기
   @IsOptional() @Type(() => Boolean) @IsBoolean() archived?: boolean; // 보관 여부
   @IsOptional() @Type(() => Boolean) @IsBoolean() success?: boolean; // 성공 여부
@@ -51,7 +53,7 @@ export class UpdateSessionMetaDto {
 // 세션 생성
 export class CreateSessionDto {
   @IsOptional() @IsString() title?: string; // 대화 제목
-  @IsOptional() @IsArray() tags?: string[]; // 주제 태그
+  @IsOptional() @IsString() tags: string; // 주제 태그 : 원랜 리스트였는데 걍 string
   @IsOptional() @Type(() => Boolean) @IsBoolean() bookmark?: boolean; // 즐겨찾기
   @IsOptional() @Type(() => Boolean) @IsBoolean() archived?: boolean; // 보관 여부
   @IsOptional() @Type(() => Boolean) @IsBoolean() success?: boolean; // 성공 여부
@@ -64,4 +66,6 @@ export class AppendMessageDto {
   @IsString() role: string;
   @IsString() content: string;
   @IsString() timestamp: string;
+  // @IsOptional() @Type(() => Number) @IsNumber() wpm: number;
+
 }

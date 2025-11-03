@@ -15,8 +15,8 @@ export class Session {
   @Prop({ default: '' })
   title: string; // 대화 제목
 
-  @Prop({ type: [String], default: [], index: true })
-  tags: string[]; // 주제 태그
+  @Prop({ type: String, default: "", index: true })
+  tags: string; // 주제 태그
 
   @Prop({ default: false, index: true })
   archived: boolean; // 보관 여부

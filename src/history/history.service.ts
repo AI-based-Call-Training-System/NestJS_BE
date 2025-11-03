@@ -58,7 +58,7 @@ export class HistoryService {
       userId,
       sessionId: newSessionId(),
       title: dto.title ?? '',
-      tags: dto.tags ?? [],
+      tags: dto.tags ?? 'greeting',
       archived: dto.archived ?? false,
       bookmark: dto.bookmark ?? false,
       success: dto.success ?? null,
@@ -196,7 +196,7 @@ export class HistoryService {
                   {
                     $sortArray: {
                       input: '$_hist',
-                      sortBy: { ts: -1, seq: -1 },
+                      sortBy: { ts: 1, seq: 1 },
                     },
                   },
                   skip,
