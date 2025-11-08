@@ -1,4 +1,3 @@
-// src/preprocess/preprocess.module.ts
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PreprocessService } from './preprocess.service';
@@ -9,9 +8,7 @@ import { Preprocess, PreprocessSchema } from './preprocess.schema';
   imports: [
     MongooseModule.forFeature([{ name: Preprocess.name, schema: PreprocessSchema }]),
   ],
-  controllers: [PreprocessController],
   providers: [PreprocessService],
-  exports:[PreprocessService]
-  
+  controllers: [PreprocessController],
 })
 export class PreprocessModule {}

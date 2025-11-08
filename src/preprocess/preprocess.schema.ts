@@ -1,31 +1,30 @@
-// src/preprocess/preprocess.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 export type PreprocessDocument = Preprocess & Document;
 
-@Schema({ timestamps: true })
+@Schema()
 export class Preprocess {
-  @Prop({ required: true })
+  @Prop()
   session_id: string;
 
-  @Prop({ type: Array, default: [] })
+  @Prop({ type: [String] })
   tags: string[];
 
   @Prop()
   messageCount: number;
 
   @Prop({ type: Object })
-  goalSpec: any;
+  goalSpec: Record<string, any>;
 
   @Prop({ type: Array })
   history: any[];
 
   @Prop({ type: Object })
-  labels: any;
+  labels: Record<string, any>;
 
   @Prop({ type: Object })
-  meta: any;
+  meta: Record<string, any>;
 }
 
 export const PreprocessSchema = SchemaFactory.createForClass(Preprocess);

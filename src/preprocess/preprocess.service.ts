@@ -1,4 +1,3 @@
-// src/preprocess/preprocess.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -7,7 +6,8 @@ import { Preprocess, PreprocessDocument } from './preprocess.schema';
 @Injectable()
 export class PreprocessService {
   constructor(
-    @InjectModel(Preprocess.name) private preprocessModel: Model<PreprocessDocument>,
+    @InjectModel(Preprocess.name)
+    private preprocessModel: Model<PreprocessDocument>,
   ) {}
 
  async savePreprocess(data: any): Promise<Preprocess> {
@@ -19,6 +19,6 @@ export class PreprocessService {
   }
 
   async getAll(): Promise<Preprocess[]> {
-    return this.preprocessModel.find().exec();
+    return this.preprocessModel.find().lean().exec();
   }
 }
