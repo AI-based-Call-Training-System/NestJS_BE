@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { PreprocessService } from './preprocess.service';
 import { Preprocess } from './preprocess.schema';
 
@@ -6,13 +6,8 @@ import { Preprocess } from './preprocess.schema';
 export class PreprocessController {
   constructor(private readonly preprocessService: PreprocessService) {}
 
-  @Post()
-  async create(@Body() preprocess: Preprocess) {
-    return this.preprocessService.savePreprocess(preprocess);
-  }
-
-  @Get()
-  async findAll(): Promise<Preprocess[]> {
-    return this.preprocessService.getAll();
+  @Post('save')
+  async save(@Body() data: any): Promise<Preprocess> {
+    return this.preprocessService.savePreprocess(data);
   }
 }

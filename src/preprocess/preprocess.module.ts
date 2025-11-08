@@ -6,9 +6,9 @@ import { Preprocess, PreprocessSchema } from './preprocess.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Preprocess.name, schema: PreprocessSchema }]),
+    MongooseModule.forFeature([{ name: Preprocess.name, schema: PreprocessSchema }])
   ],
-  providers: [PreprocessService],
   controllers: [PreprocessController],
+  providers: [PreprocessService],
 })
 export class PreprocessModule {}

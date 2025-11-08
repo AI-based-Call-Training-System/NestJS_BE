@@ -6,19 +6,19 @@ import { Preprocess, PreprocessDocument } from './preprocess.schema';
 @Injectable()
 export class PreprocessService {
   constructor(
-    @InjectModel(Preprocess.name)
-    private preprocessModel: Model<PreprocessDocument>,
+    @InjectModel(Preprocess.name) private preprocessModel: Model<PreprocessDocument>,
   ) {}
 
- async savePreprocess(data: any): Promise<Preprocess> {
+  async savePreprocess(data: any): Promise<Preprocess> {
+    // _id 기준으로 존재하면 덮어쓰기, 없으면 새로 생성
     return this.preprocessModel.findOneAndUpdate(
-      { session_id: data.session_id }, // PK처럼 사용
-      { $set: data },                 // 기존 문서 덮어쓰기
-      { upsert: true, new: true }     // 없으면 생성, 최신 문서 반환
+      { _id: data._id },   // PK 기준
+      data,                // 업데이트할 데이터
+      { new: true, upsert: true }  // upsert: 없으면 생성, new: 최신 문서 반환
     ).exec();
   }
 
   async getAll(): Promise<Preprocess[]> {
-    return this.preprocessModel.find().lean().exec();
+    return this.preprocessModel.find().exec();
   }
 }
