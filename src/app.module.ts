@@ -14,7 +14,7 @@ import { JwtStrategy } from './auth/jwt.strategy';
 import { HistoryModule } from './history/history.module';
 
 import { PreprocessModule } from './preprocess/preprocess.module';
-
+import { EvalResultModule } from './evaluate-result/eval-result.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -29,6 +29,7 @@ import { PreprocessModule } from './preprocess/preprocess.module';
       signOptions: { expiresIn: process.env.JWT_EXPIRES_IN || '1d' },
     }),
     PreprocessModule,
+    EvalResultModule
     
   ],
   controllers: [AppController, AuthController],
