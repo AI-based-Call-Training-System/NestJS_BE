@@ -5,20 +5,18 @@ import { EvalResult } from './eval-result.schema';
 
 @Injectable()
 export class EvalResultService {
-  constructor(
-    @InjectModel(EvalResult.name)
-    private readonly evalResultModel: Model<EvalResult>,
-  ) {}
+  constructor(@InjectModel(EvalResult.name) private evalResultModel: Model<EvalResult>) {}
 
-  async saveScores(session_id: string, scores: any[]) {
+  async saveResult(data: any) {
+    const { session_id, scores } = data;
     return await this.evalResultModel.findOneAndUpdate(
-      { session_id },       // 조건: 같은 session_id 문서 찾기
-      { scores },           // 업데이트할 내용
-      { upsert: true, new: true } // 없으면 새로 만들고, 만든 문서 반환
-    ).exec();
+      { session_id },
+      { session_id, scores, updatedAt: new Date() },
+      { upsert: true, new: true }
+    );
   }
 
-  async getScores(sessionId: string) {
-    return this.evalResultModel.findOne({ sessionId });
+  async findBySessionId(session_id: string) {
+    return this.evalResultModel.findOne({ session_id });
   }
 }
